@@ -24,11 +24,11 @@ public class Piece {
 	}
 	
 	public void deadPlayer() {
-		this.nbPlayer ++;
+		this.nbPlayer --;
 	}
 	
 	public void deadMonster() {
-		this.nbMonster ++;
+		this.nbMonster --;
 	}
 
 	public Position getPosition() {

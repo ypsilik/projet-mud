@@ -1,3 +1,5 @@
+package chat;
+
 import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -35,7 +37,7 @@ public class ChatServerImpl extends UnicastRemoteObject implements ChatServerInt
 	public String[] getWhoisOnline() throws RemoteException {
 		String[]allUsers = new String[users.size()];
 		for(int i = 0; i< allUsers.length; i++){
-			allUsers[i] = users.elementAt(i).getPseudo();
+			//allUsers[i] = users.elementAt(i).getPseudo();
 		}
 		return allUsers;
 	

@@ -1,8 +1,8 @@
 package maze;
 
 public enum Direction {
-	N,
-	E,
-	S,
-	O;
+	N, // NORD
+	E, // EST
+	S, // SUD
+	O; // OUEST
 }

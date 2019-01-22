@@ -1,14 +1,19 @@
+package chat;
+
 import java.rmi.Naming;
 
 public class ChatClient {
 
 	public static void main(String[] args) {
-		String url = "rmi://localhost/ChatServer";
+		String urlChat = "rmi://localhost/ChatServer";
+		String pseudo = "toto";
 		try {
-			ChatServerInterface cs = (ChatServerInterface) Naming.lookup(url);
-			new Thread(new ChatClientImpl(cs)).start();
+			ChatServerInterface cs = (ChatServerInterface) Naming.lookup(urlChat);
+			new Thread(new ChatClientImpl(cs,pseudo)).start();
 		} catch (Exception e) {
-			System.err.println("Problem main");
+			System.err.println("Problem main " + e.toString());
+			e.printStackTrace(); 
+
 		}
 	}
 

@@ -1,7 +1,10 @@
+package chat;
+
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Scanner;
+
 import maze.Player;
 
 public class ChatClientImpl extends UnicastRemoteObject implements ChatClientInterface, Runnable {
@@ -11,8 +14,9 @@ public class ChatClientImpl extends UnicastRemoteObject implements ChatClientInt
 	
 	public Player player;
 
-	protected ChatClientImpl(ChatServerInterface cs) throws RemoteException {
+	public ChatClientImpl(ChatServerInterface cs, String username) throws RemoteException {
 		this.chatS = cs;
+		player = new Player(username);
 		cs.joinChatRoom(this);
 	}
 
@@ -20,8 +24,7 @@ public class ChatClientImpl extends UnicastRemoteObject implements ChatClientInt
 	
 	public synchronized void getMessage(String s) throws RemoteException {
 		String pseudo = player.getName();
-		System.out.println(pseudo + s);
-
+		System.out.println(pseudo + " : " + s);
 	}
 
 	public void run() {
@@ -30,17 +33,13 @@ public class ChatClientImpl extends UnicastRemoteObject implements ChatClientInt
 
 		while (true) {
 			try {
+				System.out.println("enter ton txt : ");
 				msg = in.nextLine();
 				chatS.sendMessage(msg);
 			} catch (Exception e) {
-				System.err.println("Problem run");
+				System.err.println("Problem run " + e.toString());
 			}
 		}
 
 	}
-
-	
-
-	
-
 }

@@ -97,10 +97,10 @@ public class Maze {
 	private void movePlayer(Player playerA, Room newPlayerRoomA) {
 		Player player = checkPlayerExist(playerA.getName());
 		Room newPlayerRoom = checkRoomExist(newPlayerRoomA.getPosition().getX(), newPlayerRoomA.getPosition().getY());
-		Room oldPiece = this.getPiece(availablePlayer.get(player));
-		oldPiece.deadPlayer(); // delete the player from old room
+		Room oldRoom = this.getRoom(availablePlayer.get(player));
+		oldRoom.deadPlayer(); // delete the player from old room
 		if (rooms.contains(newPlayerRoom)){
-			Room currentRoom = getPiece(newPlayerRoom); // TODO pas un peu bizarre ? 
+			Room currentRoom = getRoom(newPlayerRoom); // TODO pas un peu bizarre ? 
 			availablePlayer.replace(player, currentRoom);
 			currentRoom.newPlayer();
 		} else {
@@ -115,7 +115,7 @@ public class Maze {
 	 * @param newPlayerRoom
 	 * @return current room
 	 */
-	private Room getPiece(Room newPlayerRoom) {
+	private Room getRoom(Room newPlayerRoom) {
 		int roomIndex = rooms.indexOf(newPlayerRoom);
 		Room currentRoom = rooms.get(roomIndex);
 		return currentRoom;
@@ -209,8 +209,8 @@ public class Maze {
 	}	
 
 
-	//	public void allPlayerPiece() { // TODO : pour l'instant ne sert pas
-	//		ArrayList<Player> playersSamePiece = new ArrayList<Player>(); 
+	//	public void allPlayerRoom() { // TODO : pour l'instant ne sert pas
+	//		ArrayList<Player> playersSameRoom = new ArrayList<Player>(); 
 	//		Map<String, Integer> result = new TreeMap<String, Integer>();
 	//		for (Map.Entry<Player, Room> entry : availablePlayer.entrySet()) { 
 	//			Player key = entry.getKey();

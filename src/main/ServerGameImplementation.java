@@ -31,7 +31,7 @@ public class ServerGameImplementation extends UnicastRemoteObject implements Ser
 	} 
 
 	/* (non-Javadoc)
-	 * @see main.ServerGameInterface#displayNeighbour(maze.Piece)
+	 * @see main.ServerGameInterface#displayNeighbour(maze.Room)
 	 */
 	public String displayNeighbour(Room room) throws RemoteException { // IDEA : retourne un tab int[4] au lieu d'un string ? 
 		int[] possibility = maze.getNeighbour(room);
@@ -39,11 +39,11 @@ public class ServerGameImplementation extends UnicastRemoteObject implements Ser
 	}
 
 	/* (non-Javadoc)
-	 * @see main.ServerGameInterface#canMove(maze.Player, maze.Piece, java.lang.String)
+	 * @see main.ServerGameInterface#canMove(maze.Player, maze.Room, java.lang.String)
 	 */
 	public boolean canMove(Player player, Room currentRoom, String direction) {
-		Room pieceStartTurn = currentRoom;
-		int[] possibility = maze.getNeighbour(pieceStartTurn);
+		Room roomStartTurn = currentRoom;
+		int[] possibility = maze.getNeighbour(roomStartTurn);
 		if ((direction.equalsIgnoreCase("N") && possibility[0] == 0) || 
 				(direction.equalsIgnoreCase("E") && possibility[1] == 0) || 
 				(direction.equalsIgnoreCase("S") && possibility[2] == 0) ||	
@@ -61,14 +61,14 @@ public class ServerGameImplementation extends UnicastRemoteObject implements Ser
 	}
 
 	/* (non-Javadoc)
-	 * @see main.ServerGameInterface#getPiece(maze.Player)
+	 * @see main.ServerGameInterface#getRoom(maze.Player)
 	 */
 	public Room getRoom(Player player) throws RemoteException {
 		return maze.getPlayerRoom(player);
 	}
 
 	/* (non-Javadoc)
-	 * @see main.ServerGameInterface#isTheEnd(maze.Piece)
+	 * @see main.ServerGameInterface#isTheEnd(maze.Room)
 	 */
 	public boolean isTheEnd(Room playerRoom) throws RemoteException {
 		return maze.isTheEnd(playerRoom);

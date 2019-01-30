@@ -100,7 +100,7 @@ public class Maze {
 		Room oldRoom = this.getRoom(availablePlayer.get(player));
 		oldRoom.deadPlayer(); // delete the player from old room
 		if (rooms.contains(newPlayerRoom)){
-			Room currentRoom = getRoom(newPlayerRoom); // TODO pas un peu bizarre ? 
+			Room currentRoom = getRoom(newPlayerRoom);
 			availablePlayer.replace(player, currentRoom);
 			currentRoom.newPlayer();
 		} else {
@@ -111,7 +111,7 @@ public class Maze {
 	}
 
 	/**
-	 * Get the player current room 
+	 * Get the player current room
 	 * @param newPlayerRoom
 	 * @return current room
 	 */
@@ -139,7 +139,7 @@ public class Maze {
 	 */
 	public Room getPlayerRoom(Player playerA) {
 		Player player = this.checkPlayerExist(playerA.getName());
-		Room room = availablePlayer.get(player); 
+		Room room = availablePlayer.get(player);
 		return room;
 	}
 
@@ -151,7 +151,7 @@ public class Maze {
 	public Player addPlayer(String username) {
 		Player player = this.checkPlayerExist(username);
 		if (player == null) {
-			player = new Player(username); 
+			player = new Player(username);
 		}
 		this.setPlayer(player, new Room(new Position(START_X, START_Y))); // Init when the new user is created
 		return player;
@@ -165,7 +165,7 @@ public class Maze {
 	public boolean isTheEnd(Room room){
 		if (room.getPosition().getX() == OUT_X && room.getPosition().getY() == OUT_Y) {
 			return true;
-		}		
+		}
 		return false;
 	}
 
@@ -178,7 +178,7 @@ public class Maze {
 		if (availablePlayer.isEmpty()) {
 			return null;
 		} else {
-			for (HashMap.Entry<Player, Room> entry : availablePlayer.entrySet()) { 
+			for (HashMap.Entry<Player, Room> entry : availablePlayer.entrySet()) {
 				Player key = entry.getKey();
 				if (key.getName().equalsIgnoreCase(username)) {
 					return key;
@@ -206,22 +206,5 @@ public class Maze {
 			}
 			return new Room(new Position(x,y));
 		}
-	}	
-
-
-	//	public void allPlayerRoom() { // TODO : pour l'instant ne sert pas
-	//		ArrayList<Player> playersSameRoom = new ArrayList<Player>(); 
-	//		Map<String, Integer> result = new TreeMap<String, Integer>();
-	//		for (Map.Entry<Player, Room> entry : availablePlayer.entrySet()) { 
-	//			Player key = entry.getKey();
-	//			String value = entry.getValue().toString();
-	//			Integer count = result.get(value);
-	//			if (count == null) {
-	//				result.put(value, new Integer(1));
-	//			} else {
-	//				result.put(value, new Integer(count+1));
-	//			}
-	//		}
-	//		System.out.println(result.toString());
-	//	}
+	}
 }

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package main;
 
@@ -11,7 +11,7 @@ import java.rmi.registry.Registry;
 public class ServerGame extends ServerGameImplementation{
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -26,14 +26,13 @@ public class ServerGame extends ServerGameImplementation{
 		try{
 			ServerGameImplementation srvImpl = new ServerGameImplementation();
 			Registry registry = LocateRegistry.createRegistry(1099);
-			Naming.rebind("Game", srvImpl);  
-			System.err.println("Game server ready"); 
-
-			// TODO : renvoyer ici liste user co par salle
-		} catch (Exception e) { 
-			System.err.println("Server exception: " + e.toString()); 
-			e.printStackTrace(); 
-		} 
+			Naming.rebind("Game", srvImpl);
+			System.err.println("Game server ready");
+		} catch (Exception e) {
+			System.err.println("Server exception: " + e.toString());
+			e.printStackTrace();
+			System.exit(1);
+		}
 	}
 
 

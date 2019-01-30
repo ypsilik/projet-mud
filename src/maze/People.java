@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package maze;
 
@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 public abstract class People implements Serializable{
 	/**
-	 * 
+	 *
 	 */
 	protected static final long serialVersionUID = 1L;
 	protected int pv;
@@ -18,14 +18,14 @@ public abstract class People implements Serializable{
 	}
 
 	/**
-	 * remove one pv of people 
+	 * remove one pv of people
 	 */
 	public void takeDamage() {
 		this.pv --;
 	}
 
 	/**
-	 * heal people 
+	 * heal people
 	 */
-	public abstract void heal(); // TODO : we heal monter ? 
+	public abstract void heal();
 }

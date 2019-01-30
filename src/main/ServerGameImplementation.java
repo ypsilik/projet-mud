@@ -28,12 +28,12 @@ public class ServerGameImplementation extends UnicastRemoteObject implements Ser
 	public Player createUser(String username) throws RemoteException {
 		Player player = maze.addPlayer(username);
 		return player;
-	} 
+	}
 
 	/* (non-Javadoc)
 	 * @see main.ServerGameInterface#displayNeighbour(maze.Room)
 	 */
-	public String displayNeighbour(Room room) throws RemoteException { // IDEA : retourne un tab int[4] au lieu d'un string ? 
+	public String displayNeighbour(Room room) throws RemoteException { 
 		int[] possibility = maze.getNeighbour(room);
 		return "   " + possibility[0] + "\n" + possibility[3] + "     " + possibility[1] + "\n" + "   " + possibility[2];
 	}
@@ -44,9 +44,9 @@ public class ServerGameImplementation extends UnicastRemoteObject implements Ser
 	public boolean canMove(Player player, Room currentRoom, String direction) {
 		Room roomStartTurn = currentRoom;
 		int[] possibility = maze.getNeighbour(roomStartTurn);
-		if ((direction.equalsIgnoreCase("N") && possibility[0] == 0) || 
-				(direction.equalsIgnoreCase("E") && possibility[1] == 0) || 
-				(direction.equalsIgnoreCase("S") && possibility[2] == 0) ||	
+		if ((direction.equalsIgnoreCase("N") && possibility[0] == 0) ||
+				(direction.equalsIgnoreCase("E") && possibility[1] == 0) ||
+				(direction.equalsIgnoreCase("S") && possibility[2] == 0) ||
 				(direction.equalsIgnoreCase("O") && possibility[3] == 0)) {
 			return true;
 		}
@@ -72,5 +72,5 @@ public class ServerGameImplementation extends UnicastRemoteObject implements Ser
 	 */
 	public boolean isTheEnd(Room playerRoom) throws RemoteException {
 		return maze.isTheEnd(playerRoom);
-	}		
+	}
 }

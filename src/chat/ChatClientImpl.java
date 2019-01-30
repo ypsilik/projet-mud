@@ -11,7 +11,7 @@ public class ChatClientImpl extends UnicastRemoteObject implements ChatClientInt
 
 	private static final long serialVersionUID = 1L;
 	private ChatServerInterface chatS;
-	
+
 	public Player player;
 
 	public ChatClientImpl(ChatServerInterface cs, String username) throws RemoteException {
@@ -21,25 +21,27 @@ public class ChatClientImpl extends UnicastRemoteObject implements ChatClientInt
 	}
 
 
-	
+
 	public synchronized void getMessage(String s) throws RemoteException {
-		String pseudo = player.getName();
-		System.out.println(pseudo + " : " + s);
+		System.out.println(s);
 	}
 
 	public void run() {
+		System.out.println("You are "+ player.getName());
 		Scanner in = new Scanner(System.in);
 		String msg;
 
 		while (true) {
 			try {
-				System.out.println("enter ton txt : ");
 				msg = in.nextLine();
+				msg="["+player.getName()+"] "+msg;	
 				chatS.sendMessage(msg);
 			} catch (Exception e) {
-				System.err.println("Problem run " + e.toString());
+				System.err.println("Problem run");
+				e.printStackTrace();
 			}
 		}
-
 	}
+	
+	
 }

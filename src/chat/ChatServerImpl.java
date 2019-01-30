@@ -16,8 +16,8 @@ public class ChatServerImpl extends UnicastRemoteObject implements ChatServerInt
 		users = new Vector<ChatClientInterface>();
 
 	}
-	
-	
+
+
 	public synchronized void joinChatRoom(ChatClientInterface c) throws RemoteException {
 		users.add(c);
 
@@ -36,11 +36,7 @@ public class ChatServerImpl extends UnicastRemoteObject implements ChatServerInt
 
 	public String[] getWhoisOnline() throws RemoteException {
 		String[]allUsers = new String[users.size()];
-		for(int i = 0; i< allUsers.length; i++){
-			//allUsers[i] = users.elementAt(i).getPseudo();
-		}
 		return allUsers;
-	
 	 }
 
 

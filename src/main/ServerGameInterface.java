@@ -2,6 +2,7 @@ package main;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 
 import maze.Direction;
 import maze.Room;
@@ -59,4 +60,8 @@ public interface ServerGameInterface extends Remote{
 	 * @throws RemoteException
 	 */
 	public boolean isTheEnd(Room playerRoom) throws RemoteException;
+
+	public ArrayList<Player> otherPlayerWithMe(Room roomPlayer) throws RemoteException;
+
+	public void updatePlayer(Player player)  throws RemoteException;
 }

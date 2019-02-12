@@ -208,20 +208,24 @@ public class Maze {
 		}
 	}	
 
+	/**
+	 * List all player in the room
+	 * @param room
+	 * @return players array
+	 */
+	public ArrayList<Player> allPlayerInRoom(Room room) {
+		ArrayList<Player> playersSameRoom = new ArrayList<Player>(); 
+		for (HashMap.Entry<Player, Room> entry : availablePlayer.entrySet()) { 
+			Player key = entry.getKey();
+			Room value = entry.getValue();
+			if ((value.getPosition().getX() == room.getPosition().getX()) && (value.getPosition().getY() == room.getPosition().getY())){
+				playersSameRoom.add(key);
+			}
+		}
+		return playersSameRoom;
+	}
 
-	//	public void allPlayerPiece() { // TODO : pour l'instant ne sert pas
-	//		ArrayList<Player> playersSamePiece = new ArrayList<Player>(); 
-	//		Map<String, Integer> result = new TreeMap<String, Integer>();
-	//		for (Map.Entry<Player, Room> entry : availablePlayer.entrySet()) { 
-	//			Player key = entry.getKey();
-	//			String value = entry.getValue().toString();
-	//			Integer count = result.get(value);
-	//			if (count == null) {
-	//				result.put(value, new Integer(1));
-	//			} else {
-	//				result.put(value, new Integer(count+1));
-	//			}
-	//		}
-	//		System.out.println(result.toString());
-	//	}
+	public void updatePlayer(Player player) {
+		//TODO
+	}
 }

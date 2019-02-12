@@ -23,9 +23,13 @@ public abstract class People implements Serializable{
 	public void takeDamage() {
 		this.pv --;
 	}
+	
+	public int getPV() {
+		return this.pv;
+	}
 
 	/**
 	 * heal people 
 	 */
-	public abstract void heal(); // TODO : we heal monter ? 
+	public abstract void heal(); // TODO : we heal monster ? 
 }

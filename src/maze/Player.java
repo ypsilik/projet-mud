@@ -6,14 +6,14 @@ package maze;
 
 public class Player extends People{
 	private static final long serialVersionUID = 1L;
-	private static final int DEFAULT_PV = 10;
+	private static int DEFAULT_PV = 10;
 	private String name;
-	private int maxPv;
+	private int maxPV;
 
 	public Player(String name) {
 		super(DEFAULT_PV);
+		this.maxPV = 10;
 		this.name = name;
-		this.maxPv = DEFAULT_PV;
 	}
 
 	/**
@@ -34,14 +34,16 @@ public class Player extends People{
 
 	@Override
 	public void heal() {
-		this.pv = maxPv;
+		this.pv = maxPV;
 	}
 
 	/**
 	 * Increase player pv by one
 	 */
 	public void lvlUp() {
-		this.maxPv ++;
+		this.maxPV++;
+		this.heal();
+
 	}
 
 	@Override
@@ -54,7 +56,7 @@ public class Player extends People{
 
 	@Override
 	public String toString() {
-		return "Player [name=" + name + ", maxPv=" + maxPv + "]";
+		return "Player [name=" + this.name + ", maxPv=" + this.maxPV + "]";
 	}
 	
 	

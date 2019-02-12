@@ -2,6 +2,7 @@ package main;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 
 import maze.Maze;
 import maze.Direction;
@@ -72,5 +73,15 @@ public class ServerGameImplementation extends UnicastRemoteObject implements Ser
 	 */
 	public boolean isTheEnd(Room playerRoom) throws RemoteException {
 		return maze.isTheEnd(playerRoom);
+	}
+
+	public ArrayList<Player> otherPlayerWithMe(Room roomPlayer) throws RemoteException {
+		return maze.allPlayerInRoom(roomPlayer);
+	}
+
+	@Override
+	public void updatePlayer(Player player) throws RemoteException {
+		maze.updatePlayer(player);
+		
 	}		
 }

@@ -1,20 +1,39 @@
 package chat;
 
-import java.rmi.Naming;
+import java.io.Serializable;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 
-public class ChatClient {
+import javax.print.DocFlavor.STRING;
 
-	public static void main(String[] args) {
-		String urlChat = "rmi://localhost/ChatServer";
-		String pseudo = "toto";
-		try {
-			ChatServerInterface cs = (ChatServerInterface) Naming.lookup(urlChat);
-			new Thread(new ChatClientImpl(cs,pseudo)).start();
-		} catch (Exception e) {
-			System.err.println("Problem main " + e.toString());
-			e.printStackTrace(); 
+import maze.Player;
 
-		}
+public class ChatClient implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+	private String name;
+	private ChatServerInterface chatSrv;
+
+	public ChatClient(ChatServerInterface serverChatInt, String s) throws RemoteException{
+		this.chatSrv = serverChatInt;
+		this.name = s;
+	}
+	
+	public void getMessage(String s)  throws RemoteException {
+		System.out.println(s);
 	}
 
+	public ChatClient getString()  throws RemoteException {
+		return this;
+	}
+
+
+	@Override
+	public String toString() {
+		return name;
+	}
+	
+	
+	
+	
 }

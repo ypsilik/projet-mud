@@ -174,7 +174,7 @@ public class Maze {
 	 * @param username
 	 * @return player is exist, null if not
 	 */
-	private Player checkPlayerExist(String username) {
+	public Player checkPlayerExist(String username) {
 		if (availablePlayer.isEmpty()) {
 			return null;
 		} else {
@@ -194,7 +194,7 @@ public class Maze {
 	 * @param y
 	 * @return new room or existing room
 	 */
-	private Room checkRoomExist(int x, int y) {
+	public Room checkRoomExist(int x, int y) {
 		if (availablePlayer.isEmpty()) {
 			return new Room(new Position(x,y));
 		} else {
@@ -228,4 +228,16 @@ public class Maze {
 	public void updatePlayer(Player player) {
 		//TODO
 	}
+
+	public ArrayList<Room> getRooms() {
+		// TODO Auto-generated method stub
+		return this.rooms;
+	}
+
+	public HashMap<Player, Room> getAvailablePlayer() {
+		// TODO Auto-generated method stub
+		return this.availablePlayer;
+	}
+	
+
 }

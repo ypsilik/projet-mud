@@ -83,5 +83,9 @@ public class ServerGameImplementation extends UnicastRemoteObject implements Ser
 	public void updatePlayer(Player player) throws RemoteException {
 		maze.updatePlayer(player);
 		
+	}
+
+	public Maze getMaze() {
+		return this.maze;
 	}		
 }

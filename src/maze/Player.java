@@ -3,12 +3,14 @@
  */
 package maze;
 
+import java.rmi.RemoteException;
 
 public class Player extends People{
 	private static final long serialVersionUID = 1L;
 	private static int DEFAULT_PV = 10;
 	private String name;
 	private int maxPV;
+	public Room room;
 
 	public Player(String name) {
 		super(DEFAULT_PV);
@@ -45,6 +47,7 @@ public class Player extends People{
 		this.heal();
 
 	}
+
 
 	@Override
 	public boolean equals(Object o){

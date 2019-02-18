@@ -3,12 +3,16 @@
  */
 package main;
 
+import java.nio.channels.ServerSocketChannel;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 
-public class ServerGame extends ServerGameImplementation{
+import chat.ChatServerImpl;
+
+public class ServerGame extends ServerGameImplementation {
 
 	/**
 	 * 
@@ -25,8 +29,11 @@ public class ServerGame extends ServerGameImplementation{
 	public static void main(String[] args) {
 		try{
 			ServerGameImplementation srvImpl = new ServerGameImplementation();
+			ChatServerImpl chatSrvImpl = new ChatServerImpl(srvImpl.getMaze());
+			
 			Registry registry = LocateRegistry.createRegistry(1099);
-			Naming.rebind("Game", srvImpl);  
+			Naming.rebind("Game", srvImpl);
+			Naming.rebind("ChatServer", chatSrvImpl);
 			System.err.println("Game server ready"); 
 		} catch (Exception e) { 
 			System.err.println("Server exception: " + e.toString()); 

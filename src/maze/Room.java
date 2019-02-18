@@ -4,17 +4,25 @@
 package maze;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import chat.ChatServerInterface;
 
 public class Room implements Serializable{
+	private int id = 0;
 	private Position position;
 	private int nbPlayer;
 	private int nbMonster;
-
+	
+	
 	/**
 	 * Constructor room class
 	 * @param position of room
 	 */
 	public Room(Position position) {
+		this.id++;
 		this.position = position;
 		this.nbPlayer = 0;
 		this.nbMonster = 0;
@@ -50,5 +58,6 @@ public class Room implements Serializable{
 	public Position getPosition() {
 		return new Position(this.position.getX(), this.position.getY());
 	}
+	
 
 }

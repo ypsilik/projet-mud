@@ -4,10 +4,11 @@ import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import chat.ChatClientImpl;
+import chat.ChatClient;
 import chat.ChatServerInterface;
 import fight.Fight;
 import fight.ServerFightImpl;
@@ -19,7 +20,20 @@ import maze.Room;
 import maze.Player;
 
 
-public class Client{
+public class Client  extends UnicastRemoteObject{
+	protected Client() throws RemoteException {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	/**
+	 * 
+	 */
+
 	private static Player player = null;
 	private static Room roomPlayer = null;
 	private static ServerGameInterface serverGameInt;
@@ -28,14 +42,16 @@ public class Client{
 
 	private static ArrayList<Player> playersInSameRoom;
 	private static Scanner scanner;
+	
+	private static ChatClient chatClient;
+	
 
 	public static void main(String args[]) throws RemoteException{
-
 		String urlChat = "rmi://localhost/ChatServer";
 		String urlGame = "rmi://localhost/Game";
 		String urlFight = "rmi://localhost/FightServer";
 
-
+		
 		try {  
 			// Getting the registry 
 			Registry registryGame = LocateRegistry.getRegistry(1099);
@@ -66,17 +82,16 @@ public class Client{
 						player = serverGameInt.createUser(chaine);
 						roomPlayer = serverGameInt.getRoom(player);	
 						System.out.println("You are " + player.getName() + ". Press enter to begin");
-						
+						chatClient = new ChatClient(serverChatInt,player.getName());
 						playersInSameRoom =  serverGameInt.otherPlayerWithMe(roomPlayer);
 					} catch (RemoteException e) {
 						e.printStackTrace();
 						break;
 					}	
 				} else { // Game
-					if (chaine.startsWith("\"") && playersInSameRoom.size() != 1){ // Chat
-						System.out.println("CHAT"); // DEBUG
+					if (chaine.startsWith("\"") ){ // Chat -- && playersInSameRoom.size() != 1
 						chaine = chaine.substring(1);
-						System.out.println(chaine); // DEBUG			
+						chat(chatClient,chaine);	
 					}
 					else if (chaine.equals("N") || chaine.equals("E") || chaine.equals("S") || chaine.equals("O")) { // Maze
 						try {
@@ -88,6 +103,7 @@ public class Client{
 									break;
 								}
 								playersInSameRoom = serverGameInt.otherPlayerWithMe(roomPlayer);
+								serverChatInt.joinChatRoom(player.getName(), roomPlayer);
 								System.out.println(playersInSameRoom.toString()); // DEBUG
 							} else {
 								System.out.println("It's a wall ! Try again");
@@ -144,4 +160,26 @@ public class Client{
 		
 
 	}
+	
+	public static void chat(ChatClient c, String msg) {
+		Scanner in = new Scanner(System.in);
+
+		//while (!msg.isEmpty()) {
+			try {
+				System.out.print("Your message : " + msg);
+				serverChatInt.sendMessage(roomPlayer,c , msg);
+				// TODO : notifyAll();
+				msg = in.nextLine();
+			} catch (Exception e) {
+				System.err.println("Problem run " + e.toString());
+				e.printStackTrace();
+			}
+
+	//	}
+
+	}
+
+
+	
 }
+

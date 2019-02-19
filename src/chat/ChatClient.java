@@ -14,20 +14,17 @@ public class ChatClient implements Serializable {
 	private String name;
 	private ChatServerInterface chatSrv;
 
-	public ChatClient(ChatServerInterface serverChatInt, String s) throws RemoteException{
+	/**
+	 * Contructor of ChatClient class
+	 * @param serverChatInt
+	 * @param name
+	 * @throws RemoteException
+	 */
+	public ChatClient(ChatServerInterface serverChatInt, String name) throws RemoteException{
 		this.chatSrv = serverChatInt;
-		this.name = s;
+		this.name = name;
 	}
 	
-	public void getMessage(String s)  throws RemoteException {
-		System.out.println(s);
-	}
-
-	public ChatClient getString()  throws RemoteException {
-		return this;
-	}
-
-
 	@Override
 	public String toString() {
 		return name;

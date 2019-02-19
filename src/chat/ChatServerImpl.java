@@ -3,7 +3,6 @@ package chat;
 import maze.Maze;
 import maze.Player;
 import maze.Room;
-
 import chat.ChatServerInterface;
 
 import java.rmi.AlreadyBoundException;
@@ -25,25 +24,33 @@ public class ChatServerImpl extends UnicastRemoteObject implements ChatServerInt
 	private ArrayList<Room> rooms;
 	private Maze maze;
 	private HashMap<ChatClient, Room> availableClient;
+	private HashMap<Room, String> msgReply;
 
+	/**
+	 * Constructor of ChatServeRImplementation
+	 * @param maze
+	 * @throws RemoteException
+	 */
 	public ChatServerImpl(Maze maze) throws RemoteException {
 		this.maze = maze;
 		this.availableClient = new HashMap<ChatClient, Room>();
 		this.rooms = new ArrayList<Room>();
+		this.msgReply = new HashMap<Room,String>();
 	}
 
-
-	public void joinChatRoom(String c, Room r) throws RemoteException {
-		System.out.println("1"); // DEBUG 
-		ChatClient ChatClient = checkClientExist(c.toString());
-		System.out.println("2"); // DEBUG
-		Room room = maze.checkRoomExist(r.getPosition().getX(), r.getPosition().getY());
-		System.out.println("3"); // DEBUG
+	/**
+	 * Add client to room
+	 * @param clientName : client name
+	 * @param roomA : Room
+	 */
+	public void joinChatRoom(String clientName, Room roomA) throws RemoteException {
+		ChatClient ChatClient = checkClientExist(clientName.toString());
+		Room room = maze.checkRoomExist(roomA.getPosition().getX(), roomA.getPosition().getY());
 		if (room == null) {
-			rooms.add(r);
+			rooms.add(roomA);
 
-			System.out.println("ROOM : " + r); // DEBUG
-			availableClient.put(ChatClient, r);
+			System.out.println("ROOM : " + roomA); // DEBUG
+			availableClient.put(ChatClient, roomA);
 
 		} else {
 			rooms.add(room);
@@ -54,12 +61,16 @@ public class ChatServerImpl extends UnicastRemoteObject implements ChatServerInt
 		System.out.println("TABLEAU CLIENT : " + availableClient); // DZBUG
 	}
 
+	/**
+	 * Check if client exists in Chat server
+	 * @param name
+	 * @return ChatClient
+	 */
 	private ChatClient checkClientExist(String name) {
 		if (availableClient.isEmpty()) {
 			try {
 				return new ChatClient(this,name);
 			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} else {
@@ -72,37 +83,56 @@ public class ChatServerImpl extends UnicastRemoteObject implements ChatServerInt
 			try {
 				return new ChatClient(this,name);
 			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 		return null;
 	}
 
-
-	public synchronized void leaveChatRoom(Room r) throws RemoteException {
-		rooms.remove(r);
+	/**
+	 * send message in room
+	 * @param roomA : room
+	 * @param client : Chatclient
+	 * @param text : text
+	 */
+	public synchronized void sendMessage(Room roomA, ChatClient client,String text) throws RemoteException {
+		ArrayList<ChatClient> clients = allClientInRoom(roomA);
+		String rep = "[" + client.toString() + "] " + text;
+		msgReply.put(roomA,rep);
 	}
 
-	public synchronized void sendMessage(Room r, ChatClient c,String s) throws RemoteException {
-		ArrayList<ChatClient> clients = allClientInRoom(r);
-		System.out.println("CLIENTS : " + clients); // DEBUG
-		for (int i = 0; i < clients.size(); i++) {
-			clients.get(i).getMessage(s);
-		}
-	}
-
-
-	private ArrayList<ChatClient> allClientInRoom(Room r) {
+	/**
+	 * return all client in maze room
+	 * @param roomA
+	 * @return list of client
+	 */
+	private ArrayList<ChatClient> allClientInRoom(Room roomA) {
 		ArrayList<ChatClient> clientsSameRoom = new ArrayList<ChatClient>(); 
 		for (HashMap.Entry<ChatClient, Room> entry : availableClient.entrySet()) { 
 			ChatClient key = entry.getKey();
 			Room value = entry.getValue();
-			if ((value.getPosition().getX() == r.getPosition().getX()) && (value.getPosition().getY() == r.getPosition().getY())){
+			if ((value.getPosition().getX() == roomA.getPosition().getX()) && (value.getPosition().getY() == roomA.getPosition().getY())){
 				clientsSameRoom.add(key);
 			}
 		}
 		return clientsSameRoom;
+	}
+
+	/**
+	 * get client message to send other client
+	 * @param roomPlayer
+	 * @return list of messages
+	 */
+	public ArrayList<String> getReply(Room roomPlayer) throws RemoteException {
+		ArrayList<String> repliesByRoom = new ArrayList<String>();
+		for (HashMap.Entry<Room, String> entry : msgReply.entrySet()) { 
+			Room key = entry.getKey();
+			String value = entry.getValue();
+			if ((key.getPosition().getX() == roomPlayer.getPosition().getX()) && (key.getPosition().getY() == roomPlayer.getPosition().getY())){
+				repliesByRoom.add(value);
+			}
+		}
+		return repliesByRoom;
 	}
 }
 

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package main;
 
@@ -11,11 +11,12 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
 import chat.ChatServerImpl;
+import fight.ServerFightImpl;
 
 public class ServerGame extends ServerGameImplementation {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -28,17 +29,19 @@ public class ServerGame extends ServerGameImplementation {
 	 */
 	public static void main(String[] args) {
 		try{
-			ServerGameImplementation srvImpl = new ServerGameImplementation();
-			ChatServerImpl chatSrvImpl = new ChatServerImpl(srvImpl.getMaze());
-			
-			Registry registry = LocateRegistry.createRegistry(1099);
-			Naming.rebind("Game", srvImpl);
-			Naming.rebind("ChatServer", chatSrvImpl);
-			System.err.println("Game server ready"); 
-		} catch (Exception e) { 
-			System.err.println("Server exception: " + e.toString()); 
-			e.printStackTrace(); 
-		} 
+			ServerGameImplementation gameSrvImpl = new ServerGameImplementation(); // Start game
+			ChatServerImpl chatSrvImpl = new ChatServerImpl(gameSrvImpl.getMaze()); // Start chat
+			ServerFightImpl fightSrvImpl = new ServerFightImpl(); // Start Fight
+
+			Registry registry = LocateRegistry.createRegistry(1099); // Create registry
+			Naming.rebind("Game", gameSrvImpl); // Expose game
+			Naming.rebind("ChatServer", chatSrvImpl); // Expose chat
+			Naming.rebind("FightServer", fightSrvImpl); // Expose fight
+			System.err.println("Servers ready");
+		} catch (Exception e) {
+			System.err.println("Server exception: " + e.toString());
+			e.printStackTrace();
+		}
 	}
 
 

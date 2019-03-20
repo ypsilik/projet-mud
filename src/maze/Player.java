@@ -1,66 +1,62 @@
-/**
- * 
- */
 package maze;
 
-import java.rmi.RemoteException;
+import java.io.Serializable;
 
-public class Player extends People{
-	private static final long serialVersionUID = 1L;
-	private static int DEFAULT_PV = 10;
+import notif.NotifImplementation;
+import notif.NotifInterface;
+
+public class Player implements Serializable{
+
+	private static int MAX_PV = 10;
 	private String name;
-	private int maxPV;
-	public Room room;
+	private int pv;
+	private int lvl;
+	private NotifInterface notifInt;
 
 	public Player(String name) {
-		super(DEFAULT_PV);
-		this.maxPV = 10;
+		this.pv = MAX_PV;
 		this.name = name;
+		this.lvl = 0;
 	}
-
-	/**
-	 * get player name
-	 * @return String : player name
-	 */
+	
 	public String getName() {
-		return name;
+		return this.name;
 	}
-
-	/**
-	 * set player name
-	 * @param name
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	@Override
 	public void heal() {
-		this.pv = maxPV;
+		this.pv = MAX_PV + this.lvl;
 	}
 
-	/**
-	 * Increase player pv by one
-	 */
-	public void lvlUp() {
-		this.maxPV++;
+	public void lvlUp(){
+		this.lvl ++;
 		this.heal();
-
 	}
 
+    public void setServerNotif(NotifInterface notifInterface) {
+        this.notifInt = notifInterface;
+    }
 
-	@Override
-	public boolean equals(Object o){
+    public NotifInterface getServeurNotif() {
+        return this.notifInt;
+    }
+    
+    public boolean equals(Object o){
 		if( o  instanceof Player){
-			return this.name  == ((Player)o).name;
+			return this.name.equals(((Player)o).name);
 		}
 		return false;
 	}
 
+    
 	@Override
 	public String toString() {
-		return "Player [name=" + this.name + ", maxPv=" + this.maxPV + "]";
+		return "Player [name=" + name + ", pv=" + pv + ", lvl=" + lvl + "]";
 	}
-	
-	
+
+	public void takeDamage() {
+		this.pv--;
+	}
+
+	public int getPV() {
+		return this.pv;
+	}
 }

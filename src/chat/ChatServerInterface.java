@@ -2,13 +2,15 @@ package chat;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 
+import notif.NotifInterface;
+import maze.Player;
 import maze.Room;
 public interface ChatServerInterface extends Remote {
  
-    void joinChatRoom(String string, Room r) throws RemoteException;  //  to join ChatClient
-    void sendMessage (Room r, ChatClient c, String s) throws RemoteException; // to send message to any ChatClient
-	ArrayList<String> getReply(Room roomPlayer) throws RemoteException;
+    void sendMessage (Room r, Player p, String s) throws RemoteException; // to send message to any ChatClient
+
+	void recordNotification(Player playerA, NotifInterface notif) throws RemoteException;
+
 
 }

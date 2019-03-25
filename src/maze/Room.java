@@ -46,7 +46,9 @@ public class Room implements Serializable{
 	 * @param monster 
 	 */
 	public void deleteMonster(Monster monster) {
-		this.monsters.remove(this.monsters.indexOf(monster));
+		if (this.monsters.contains(monster)) {
+			this.monsters.remove(this.monsters.indexOf(monster));
+		}
 	}
 
 	/**
@@ -104,5 +106,9 @@ public class Room implements Serializable{
 			return this.id  == ((Room)o).id;
 		}
 		return false;
+	}
+
+	public void updateMonster(Monster monster) {
+		this.monsters.set(this.monsters.indexOf(monster), monster);		
 	}
 }

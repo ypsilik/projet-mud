@@ -5,16 +5,15 @@ import java.io.Serializable;
 import notif.NotifImplementation;
 import notif.NotifInterface;
 
-public class Player implements Serializable{
+public class Player extends People implements Serializable{
 
 	private static int MAX_PV = 10;
 	private String name;
-	private int pv;
 	private int lvl;
 	private NotifInterface notifInt;
 
 	public Player(String name) {
-		this.pv = MAX_PV;
+		super(MAX_PV);
 		this.name = name;
 		this.lvl = 0;
 	}
@@ -40,7 +39,7 @@ public class Player implements Serializable{
     }
     
     public boolean equals(Object o){
-		if( o  instanceof Player){
+		if( o instanceof Player){
 			return this.name.equals(((Player)o).name);
 		}
 		return false;
@@ -50,13 +49,5 @@ public class Player implements Serializable{
 	@Override
 	public String toString() {
 		return "Player [name=" + name + ", pv=" + pv + ", lvl=" + lvl + "]";
-	}
-
-	public void takeDamage() {
-		this.pv--;
-	}
-
-	public int getPV() {
-		return this.pv;
 	}
 }

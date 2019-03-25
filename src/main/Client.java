@@ -6,6 +6,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Scanner;
 
+import javax.print.attribute.Attribute;
 import javax.print.attribute.standard.Severity;
 
 import chat.ChatServerInterface;
@@ -14,6 +15,7 @@ import notif.NotifImplementation;
 import notif.NotifInterface;
 import maze.Direction;
 import maze.Monster;
+import maze.People;
 import maze.Player;
 import maze.Room;
 import maze.ServerGameInterface;
@@ -29,6 +31,8 @@ public class Client {
 	private static ServerFightInterface serverFightInt;
 
 	private static Scanner scanner;
+
+	private static NotifInterface notifInt;
 
 	public static void main(String[] args) {
 		// INIT
@@ -61,21 +65,12 @@ public class Client {
 			} else {
 				player = serverGameInt.createUser(chaine);
 				serverGameInt.initPlayer(player);
-
-				//roomPlayer = serverGameInt.getRoom(player);
-				//  chatClient = new ChatClient(serverChatInt,player.getName());
-				//  playersInSameRoom =  serverGameInt.otherPlayerWithMe(roomPlayer);
-				//    serverChatInt.joinChatRoom(player.getName(), roomPlayer);
-				//    System.out.println(roomPlayer); // DEBUG
 			}
 		} catch (RemoteException e) {
 			e.printStackTrace();
 			System.exit(-1);
 		}
-		// this.remoteChat.seConnecter(this.personnage); // Co Chat
-		// CO DE LA NOTIF
-
-		NotifInterface notifInt = null;
+		notifInt = null;
 		try {
 			System.out.println("PLAYER : "+ player); // DEBUG
 			notifInt = new NotifImplementation();
@@ -87,13 +82,11 @@ public class Client {
 			e.printStackTrace();
 			System.exit(-1);
 		}
-		// 		this.remoteChat.enregistrerNotification(this.personnage, remoteNotif);
 		System.out.println("You're ready to play " + player.getName() + "!");
 		while(!chaine.equalsIgnoreCase("END")) {
 			try {
 				serverGameInt.coNotif(player, notifInt);
 			} catch (RemoteException e2) {
-				// TODO Auto-generated catch block
 				e2.printStackTrace();
 			}
 			if (chaine != null) {
@@ -113,7 +106,6 @@ public class Client {
 					try {
 						chat(serverGameInt.getRoom(player), player, chaine);
 					} catch (RemoteException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				} else if (chaine.equals("N") || chaine.equals("E") || chaine.equals("S") || chaine.equals("O")) {
@@ -143,21 +135,24 @@ public class Client {
 		System.out.println("Choose monster to fight");
 		msg = scanner.nextLine();
 		Monster monster = serverGameInt.getRoom(player).getMonsters().get(Integer.parseInt(msg) - 1);
-		serverFightInt.initializeFight(player, monster);
+		serverFightInt.initializeFight(player, monster, notifInt);
 		System.out.print("Start fight, run away ? [Y/N] ");
 
 		while (true) {
-			Player playerIsDead = null;
+			People whoIsDead = null;
 			msg = scanner.nextLine();
 			if (msg.equals("Y")) {
 				break;
 			} else {
 				try {
-					playerIsDead = serverFightInt.turn();
+					serverFightInt.coNotif(player, notifInt);
+					whoIsDead = serverFightInt.turn();
 				} catch (RemoteException e) {
 					System.err.println("Server connexion error");
 				}
-				if (playerIsDead == null) {
+				if (((whoIsDead instanceof Monster) ||
+						((whoIsDead instanceof Player) && !((Player) whoIsDead).getName().equals(player.getName()))) && 
+						whoIsDead.getPV() == 0) {
 					player.lvlUp();
 					System.out.println("You're alive !");
 					try {
@@ -167,7 +162,9 @@ public class Client {
 						e.printStackTrace();
 					}
 					break;
-				} else if (playerIsDead.getPV() == 0) {
+				} else if (((whoIsDead instanceof Player) &&
+						((Player) whoIsDead).getName().equals(player.getName())) &&
+						whoIsDead.getPV() == 0) {
 					System.out.println("You are dead !");
 					try {
 						serverGameInt.removeUser(player);
@@ -176,20 +173,23 @@ public class Client {
 					}
 					System.exit(0);
 				} else {
-					System.out.print("Your health level : " + playerIsDead.getPV() + "pv, run away ? [Y/N] ");
 				}
 			}
 		}
 	}
-	
+
 	private static void chat(Room r, Player p, String msg) {
+		try {
+			serverChatInt.recordNotification(player, notifInt);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
 		try { // send msg attribute
 			serverChatInt.sendMessage(r,p,msg);	
 		} catch (RemoteException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
+
 	}
 
 }

@@ -39,51 +39,22 @@ public class ChatServerImpl extends UnicastRemoteObject implements ChatServerInt
 		for (Player player : maze.getRoom(playerA).getPlayers()) {
 			listPlayer.put(player.getName(), player);
 		}
-//		listPlayer = maze.allPlayerInRoomChat(roomA);
-		System.out.println("CHAT : " + listPlayer); // DEBUG
+		//		listPlayer = maze.allPlayerInRoomChat(roomA);
+		System.out.println("CHAT : " + listPlayer + " ------ ROOM : " + maze.getRoom(playerA)); // DEBUG
 		for (HashMap.Entry<String, Player> entry : listPlayer.entrySet()) { 
 			String key = entry.getKey();
-			System.out.println("CHAT for : " + listPlayer.get(key)); // DEBUG
+			System.out.println("CHAT for : " + listPlayer.get(key) + " -------- PA : " + playerA + " ---- " + msg); // DEBUG
 			listPlayer.get(key).getServeurNotif().notify(playerA.getName() + " : " + msg);
 		}
-			
-			
-//				try {
-//					System.out.println("player" + player.getName());//DEBUG
-//					System.out.println("playerA" + playerA.getName());//DEBUG
-//					System.out.println("getservernotif" + player.getServeurNotif());//DEBUG
-//					.getServeurNotif().notifier(playerA.getName() + ": " + text);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-		}
-
-
+	}
 
 	public void recordNotification(Player playerA, NotifInterface notif) throws RemoteException {
 		for (Player player : maze.getRoom(playerA).getPlayers()) {
 			listPlayer.put(player.getName(), player);
 		}
-	//	listPlayer = maze.allPlayerInRoomChat(roomA);
 		Player player = listPlayer.get(playerA.getName());
 		player.setServerNotif(notif);	
-		System.out.println("toto"); // DEBUG
-			
 	}
-
-	
-//	public void removeNotification(Player playerA) throws RemoteException {
-//		for (Player player : listPlayer){
-//			if(player.getName() == playerA.getName()) {
-//				player.setServeurNotif(null);
-//			}
-//		}
-//	}
-	
-
-
-
-
 }
 
 

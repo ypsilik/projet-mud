@@ -15,7 +15,7 @@ public static void main(String[] args) {
 		try{
 			ServerGameImplementation gameSrvImpl = new ServerGameImplementation(); // Start game
 			ChatServerImpl chatSrvImpl = new ChatServerImpl(gameSrvImpl); // Start chat
-			ServerFightImpl fightSrvImpl = new ServerFightImpl(); // Start Fight
+			ServerFightImpl fightSrvImpl = new ServerFightImpl(gameSrvImpl); // Start Fight
 
 			Registry registry = LocateRegistry.createRegistry(1099); // Create registry
 			Naming.rebind("Game", gameSrvImpl); // Expose game

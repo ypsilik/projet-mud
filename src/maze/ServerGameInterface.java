@@ -28,6 +28,6 @@ public interface ServerGameInterface extends Remote{
 
 	void removeUser(Player player) throws RemoteException;
 
-	void updatePlayer(Player player, Monster monster, Room room) throws RemoteException;
+	void updatePlayer(Player player, People monster, Room room) throws RemoteException;
 
 }

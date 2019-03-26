@@ -20,8 +20,6 @@ import maze.Player;
 import maze.Room;
 import maze.ServerGameInterface;
 
-// Client Jeu
-
 public class Client {
 
 	private static Player player;
@@ -128,14 +126,26 @@ public class Client {
 
 	private static void fight() throws RemoteException {
 		String msg;
-		int index = 0;
 		for (Monster monster : serverGameInt.getRoom(player).getMonsters()) {
-			System.out.println( ++index + " -> " + monster); // TODO : Change display style
+			System.out.println( monster.getId() + " -> " + monster); // TODO : Change display style
 		}
-		System.out.println("Choose monster to fight");
+		for (Player playerF : serverGameInt.getRoom(player).getPlayers()) {
+			if (!playerF.getName().equals(player.getName())) {
+				System.out.println( playerF.getName() + " -> " + playerF); // TODO : Change display style
+			}
+		}
+		System.out.println("Choose monster to fight [Monster <id>] or player [Player <name>]");
 		msg = scanner.nextLine();
-		Monster monster = serverGameInt.getRoom(player).getMonsters().get(Integer.parseInt(msg) - 1);
-		serverFightInt.initializeFight(player, monster, notifInt);
+		
+		if (msg.split(" ")[0].equalsIgnoreCase("Monster")) {
+			Monster monster = serverGameInt.getRoom(player).searchMonster(Integer.parseInt(msg.split(" ")[1]));
+			serverFightInt.initializeFight(player, monster, notifInt);
+		} else {
+			Player playerF = serverGameInt.getRoom(player).searchPlayer(msg.split(" ")[1]);
+			serverFightInt.initializeFight(player, playerF, notifInt);
+		}
+		
+		
 		System.out.print("Start fight, run away ? [Y/N] ");
 
 		while (true) {
@@ -156,7 +166,7 @@ public class Client {
 					player.lvlUp();
 					System.out.println("You're alive !");
 					try {
-						serverGameInt.updatePlayer(player, monster, serverGameInt.getRoom(player));
+						serverGameInt.updatePlayer(player, whoIsDead, serverGameInt.getRoom(player));
 						System.out.println(player);
 					} catch (RemoteException e) {
 						e.printStackTrace();

@@ -165,26 +165,30 @@ public class ServerGameImplementation  extends UnicastRemoteObject implements Se
 	}
 
 	@Override
-	public void decoUser(Player player) {
-		// TODO 
-	}
-
-	@Override
 	public void removeUser(Player player) {
 		try {
 			getRoom(player).deletePlayer(player);
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		players.remove(player.getName());
 	}
 
+	
 	@Override
-	public void updatePlayer(Player player, Monster monster, Room room) throws RemoteException {
+	public void updatePlayer(Player player, People monster, Room room) throws RemoteException {
 		players.put(player.getName(), player);
 		room.addPlayer(player);
-		room.deleteMonster(monster);
-		rooms.set(rooms.indexOf(room),room);
+		if (monster instanceof Monster) {
+			room.deleteMonster((Monster) monster);
+		}
+		rooms.set(rooms.indexOf(room),room);		
 	}
+
+	@Override
+	public void decoUser(Player player) throws RemoteException {
+		// TODO Auto-generated method stub
+		
+	}
+	
 }

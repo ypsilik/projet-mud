@@ -95,7 +95,7 @@ public class ServerFightImpl extends UnicastRemoteObject implements ServerFightI
 			for (HashMap.Entry<Player, People> entry : fightList.entrySet()) { 
 				Player key = entry.getKey();
 				System.out.println("FIGHT UPDATE : " + entry.getValue()); // DEBUG
-				if (((Monster) entry.getValue()).getId() == ((Monster) this.p2).getId()) {
+				if (entry.getValue() != null && ((Monster) entry.getValue()).getId() == ((Monster) this.p2).getId()) {
 					fightList.replace(key, this.p2);
 				}
 			}
@@ -126,10 +126,12 @@ public class ServerFightImpl extends UnicastRemoteObject implements ServerFightI
 	public void notifyAllFighters() {
 		for (HashMap.Entry<Player, People> entry : fightList.entrySet()) { 
 			Player key = entry.getKey();
-			try {
-				key.getServeurNotif().notify("You have " + key.getPV() + "pv. Monster have " + entry.getValue().getPV() + "pv. Run away ? [Y/N]");
-			} catch (RemoteException e) {
-				e.printStackTrace();
+			if (entry.getValue() != null && ((Monster) entry.getValue()).getId() == ((Monster) this.p2).getId()) {
+				try {
+					key.getServeurNotif().notify("You have " + key.getPV() + "pv. Monster have " + entry.getValue().getPV() + "pv. Run away ? [Y/N]");
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}

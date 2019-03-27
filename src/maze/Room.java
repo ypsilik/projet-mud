@@ -109,6 +109,8 @@ public class Room implements Serializable{
 	}
 
 	public void updateMonster(Monster monster) {
+		if (this.monsters.contains(monster)) {
 		this.monsters.set(this.monsters.indexOf(monster), monster);		
+		}
 	}
 }

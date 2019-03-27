@@ -22,12 +22,12 @@ public interface ServerGameInterface extends Remote{
 
 	void initPlayer(Player player) throws RemoteException;
 
-	boolean walkPlayer(Player player, String chaine) throws RemoteException;
-
-	void decoUser(Player player) throws RemoteException;
+	int walkPlayer(Player player, String chaine) throws RemoteException;
 
 	void removeUser(Player player) throws RemoteException;
 
 	void updatePlayer(Player player, People monster, Room room) throws RemoteException;
+
+	void notifyRival(Player playerR, Player playerF, String msg) throws RemoteException;
 
 }

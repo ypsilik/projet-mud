@@ -64,8 +64,9 @@ public class Client {
 				player = serverGameInt.createUser(chaine);
 				serverGameInt.initPlayer(player);
 			}
-		} catch (RemoteException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			System.err.println("Server game error - please restart game");
+			///e.printStackTrace();
 			System.exit(-1);
 		}
 		notifInt = null;
@@ -76,55 +77,64 @@ public class Client {
 			serverFightInt.coNotif(player, notifInt);
 			serverChatInt.recordNotification(player,notifInt);
 
-		} catch (RemoteException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(-1);
 		}
-		System.out.println("You're ready to play " + player.getName() + "!");
+		System.out.println("You're ready to play " + player.getName() + "! - Press enter to begin");
 		while(!chaine.equalsIgnoreCase("END")) {
 			try {
 				serverGameInt.coNotif(player, notifInt);
-			} catch (RemoteException e2) {
-				e2.printStackTrace();
+			} catch (Exception e2) {
+				System.err.println("Error co notif server Game");
+//				e2.printStackTrace();
 			}
+			if (player.getPV() == 0) {
+				System.out.println("Disconnected");
+				System.exit(0);
+			}
+			chaine = scanner.nextLine();
 			if (chaine != null) {
 				if (chaine.equalsIgnoreCase("END")) {
-					System.out.println("IS THE END");
-					break;
+					System.out.println("End of game - Disconnected");
+					System.exit(0);
 				}
 				try {
 					serverGameInt.displayMaze(serverGameInt.getRoom(player), player);
-				} catch (RemoteException e1) {
-
-					e1.printStackTrace();
+				} catch (Exception e1) {
+					System.err.println("You're dead - or server error");
+					System.exit(-1);
+//					e1.printStackTrace();
 				}
-				System.out.print("Where do you want to go ? [N/E/S/O] or \" to speak : ");
-				chaine = scanner.nextLine();
 				if (chaine.startsWith("\"") ){ // Chat
 					try {
 						chat(serverGameInt.getRoom(player), player, chaine);
-					} catch (RemoteException e) {
-						e.printStackTrace();
+					} catch (Exception e) {
+						System.err.println("Chat server error");
+						System.exit(-1);
+//						e.printStackTrace();
 					}
 				} else if (chaine.equals("N") || chaine.equals("E") || chaine.equals("S") || chaine.equals("O")) {
-					try {
-						if (!serverGameInt.walkPlayer(player, chaine)) { // END TODO : change function tu return 0, 1 or 2 if it's END, wall or door
-							System.exit(0);
+						try {
+							if (serverGameInt.walkPlayer(player, chaine) == 0) { // ROOM
+								fight();
+							} else if (serverGameInt.walkPlayer(player, chaine) == 1) { // END
+								System.exit(0);
+							} else { // WALL
+							}
+						} catch (Exception e) {
+							System.err.println("Server Fight error");
+							System.exit(-1);
+//							e.printStackTrace();
 						}
-					} catch (RemoteException e) {
-						e.printStackTrace();
-					}
-					try {
-						fight(); // TODO : if it's wall no start fight
-					} catch (RemoteException e) {
-						e.printStackTrace();
-					} 
 				}
 			}
+			System.out.print("Where do you want to go ? [N/E/S/O] or \" to speak : ");
 		}
 	}
 
-	private static void fight() throws RemoteException {
+	private static void fight() throws Exception {
+		serverFightInt.coNotif(player, notifInt);
 		String msg;
 		for (Monster monster : serverGameInt.getRoom(player).getMonsters()) {
 			System.out.println( monster.getId() + " -> " + monster); // TODO : Change display style
@@ -136,28 +146,34 @@ public class Client {
 		}
 		System.out.println("Choose monster to fight [Monster <id>] or player [Player <name>]");
 		msg = scanner.nextLine();
-		
 		if (msg.split(" ")[0].equalsIgnoreCase("Monster")) {
 			Monster monster = serverGameInt.getRoom(player).searchMonster(Integer.parseInt(msg.split(" ")[1]));
 			serverFightInt.initializeFight(player, monster, notifInt);
-		} else {
+			System.out.print("Start fight, run away ? [Y/N] ");
+			fightTurn();	
+			return;
+		} else if (msg.split(" ")[0].equalsIgnoreCase("Player")) {
 			Player playerF = serverGameInt.getRoom(player).searchPlayer(msg.split(" ")[1]);
+			serverGameInt.notifyRival(player, playerF, "Player " + player.getName() + " start fight with you (Are you lucky ?)"); // TODO modif phrase XD
 			serverFightInt.initializeFight(player, playerF, notifInt);
+			System.out.print("Start fight, run away ? [Y/N] ");
+			fightTurn();
+			return;
 		}
-		
-		
-		System.out.print("Start fight, run away ? [Y/N] ");
+	}
 
+	private static void fightTurn() {
+		String msg;
 		while (true) {
 			People whoIsDead = null;
 			msg = scanner.nextLine();
 			if (msg.equals("Y")) {
-				break;
+				return;
 			} else {
 				try {
 					serverFightInt.coNotif(player, notifInt);
 					whoIsDead = serverFightInt.turn();
-				} catch (RemoteException e) {
+				} catch (Exception e) {
 					System.err.println("Server connexion error");
 				}
 				if (((whoIsDead instanceof Monster) ||
@@ -168,18 +184,20 @@ public class Client {
 					try {
 						serverGameInt.updatePlayer(player, whoIsDead, serverGameInt.getRoom(player));
 						System.out.println(player);
-					} catch (RemoteException e) {
-						e.printStackTrace();
+					} catch (Exception e) {
+						System.err.println("Update player error");
+//						e.printStackTrace();
 					}
-					break;
+					return;
 				} else if (((whoIsDead instanceof Player) &&
 						((Player) whoIsDead).getName().equals(player.getName())) &&
 						whoIsDead.getPV() == 0) {
 					System.out.println("You are dead !");
 					try {
 						serverGameInt.removeUser(player);
-					} catch (RemoteException e) {
-						e.printStackTrace();
+					} catch (Exception e) {
+						System.err.println("Player deletion suppression error");
+//						e.printStackTrace();
 					}
 					System.exit(0);
 				} else {
@@ -191,13 +209,15 @@ public class Client {
 	private static void chat(Room r, Player p, String msg) {
 		try {
 			serverChatInt.recordNotification(player, notifInt);
-		} catch (RemoteException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			System.err.println("Chat error");
+//			e.printStackTrace();
 		}
 		try { // send msg attribute
 			serverChatInt.sendMessage(r,p,msg);	
-		} catch (RemoteException e1) {
-			e1.printStackTrace();
+		} catch (Exception e1) {
+			System.err.println("Chat error");
+//			e1.printStackTrace();
 		}
 
 	}

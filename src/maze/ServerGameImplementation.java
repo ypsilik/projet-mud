@@ -1,9 +1,15 @@
 package maze;
 
+import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.rmi.registry.Registry;
+import java.rmi.server.RemoteServer;
+import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import com.sun.jndi.rmi.registry.RegistryContext;
 
 import notif.NotifInterface;
 
@@ -53,8 +59,6 @@ public class ServerGameImplementation  extends UnicastRemoteObject implements Se
 		return players.get(username);
 	}
 
-
-
 	public Player checkPlayerExists(String username) throws RemoteException {
 		if (players.isEmpty()) {
 			return null;
@@ -97,7 +101,6 @@ public class ServerGameImplementation  extends UnicastRemoteObject implements Se
 		if (room.getPosition().getY() != 0) {
 			neighbourRooms[3] = this.maze[room.getPosition().getX()][room.getPosition().getY()-1]; // OUEST
 		}
-		System.out.println("DISPLAY : " + room);
 		players.get(player.getName()).getServeurNotif().notify("   " + neighbourRooms[0] + "\n" + neighbourRooms[3] + "     " + neighbourRooms[1] + "\n" + "   " + neighbourRooms[2]);
 	}
 
@@ -127,7 +130,7 @@ public class ServerGameImplementation  extends UnicastRemoteObject implements Se
 		}
 	}
 
-	public boolean walkPlayer(Player player, String direction) throws RemoteException {
+	public int walkPlayer(Player player, String direction) throws RemoteException {
 		Room newPlayerRoom = null;
 		switch (Direction.valueOf(direction)) {
 		case N:
@@ -143,24 +146,22 @@ public class ServerGameImplementation  extends UnicastRemoteObject implements Se
 			newPlayerRoom = checkRoomExist(getRoom(player).getPosition().getX(), getRoom(player).getPosition().getY()-1);
 			break;
 		default :
-			players.get(player).getServeurNotif().notify("It's a wall !");
 			break;
 		}
 		if (newPlayerRoom == null) {
 			players.get(player.getName()).getServeurNotif().notify("It's a wall !");
-			return true;
+			return 2;
 		} else if (newPlayerRoom.getPosition().getX() == OUT_X && newPlayerRoom.getPosition().getY() == OUT_Y){
 			players.get(player.getName()).getServeurNotif().notify("You see the light ! END");
 			this.removeUser(player);
-			return false;
+			return 1;
 		} else {
 			rooms.set(rooms.indexOf(getRoom(player)), getRoom(player));
 			getRoom(player).deletePlayer(player);
 			newPlayerRoom.addMonster();
 			newPlayerRoom.addPlayer(player);
 			rooms.set(rooms.indexOf(newPlayerRoom),newPlayerRoom);
-			System.out.println("MOVE : " + rooms);
-			return true;
+			return 0;
 		}
 	}
 
@@ -182,13 +183,17 @@ public class ServerGameImplementation  extends UnicastRemoteObject implements Se
 		if (monster instanceof Monster) {
 			room.deleteMonster((Monster) monster);
 		}
+		if (monster instanceof Player) {
+			room.deletePlayer((Player) monster);
+			System.out.println(monster);
+			players.replace(((Player) monster).getName(), (Player) monster);
+		}
 		rooms.set(rooms.indexOf(room),room);		
 	}
 
 	@Override
-	public void decoUser(Player player) throws RemoteException {
-		// TODO Auto-generated method stub
-		
-	}
-	
+	public void notifyRival(Player playerR, Player playerF, String msg) throws RemoteException {
+		Player player = this.players.get(playerF.getName());
+		player.getServeurNotif().notify(msg);
+	}	
 }
